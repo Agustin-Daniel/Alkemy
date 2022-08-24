@@ -2,8 +2,8 @@ import {Route, Routes, Navigate, useLocation} from 'react-router-dom'
 
 import './App.css';
 import { Tasks } from './components/views/Tasks/Tasks';
-import { Login } from './components/views/Login/Login';
-import { Register } from './components/views/Register/Register';
+import { Login } from './components/views/auth/Login/Login';
+import { Register } from './components/views/auth/Register/Register';
 import { AnimatePresence, motion } from 'framer-motion';
 import { lazy, Suspense } from 'react';
 
@@ -40,7 +40,7 @@ export const App = () => {
                     element={
                         <RequiredAuth>
                             <motion.div
-                                className='motion'
+                                className='page'
                                 initial="out"
                                 animate="in"
                                 exit="out" 
@@ -55,7 +55,7 @@ export const App = () => {
                     path='/login'
                     element={
                         <motion.div
-                            className='motion'
+                            className='page'
                             initial="out"
                             animate="in"
                             exit="out" 
@@ -67,7 +67,7 @@ export const App = () => {
                     path='/*'
                     element={
                         <motion.div
-                            className='motion'
+                            className='page'
                             initial="out"
                             animate="in"
                             exit="out" 
@@ -81,7 +81,7 @@ export const App = () => {
                     path='/register'
                     element={
                         <motion.div
-                            className='motion'
+                            className='page'
                             initial="out"
                             animate="in"
                             exit="out" 

@@ -1,27 +1,39 @@
 import React from 'react'
 import { Header } from '../../Header/Header'
 import "./Tasks.styles.css"
+import { useResize } from '../../../hooks/useResize'
+import { cardsData } from '../Tasks/cardsData'
+import { Card } from '../../Card/Card'
+import { TaskForm } from '../../TaskForm/TaskForm'
 
 export const Tasks = () => {
+
+  const { isPhone } = useResize()
+
+  // const limitString = str => {
+  //   if (str.length > 170)
+  //     return { string: str.slice(0, 167).concat("..."), addButton: true }
+  //   return { string: str, addButton: false}
+  // }
+
+  const renderAllCards = () => {
+    return cardsData.map( data => <Card key={data.id}  data={data} />)
+  }
+
   return (
     <>
       <Header />
       <main id='tasks'>
+          <TaskForm />
           <section className='wrapper_list'>
             <div className='list_header'>
                 <h2>Mis tareas</h2>
             </div>
-            <div className='list'>
-                <div className='card'>
-                  <div className='close'>x</div>
-                  <h3>Tarea 1</h3>
-                  <h6>24/1/2022 15:54 hs.</h6>
-                  <h5>Agustin Messina!</h5>
-                  <button type='button'>Nueva</button>
-                  <button type='button'>Alta</button>
-                  <p>Description fake</p>
-                </div>
-              </div>
+            { isPhone ? (
+              <div className='list phone'> {renderAllCards()} </div>
+            ) : (
+              <div className='list phone'> {renderAllCards()} </div>
+            )}
           </section>
       </main>
     </>
