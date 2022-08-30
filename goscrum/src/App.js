@@ -6,13 +6,14 @@ import { Login } from './components/views/auth/Login/Login';
 import { Register } from './components/views/auth/Register/Register';
 import { AnimatePresence, motion } from 'framer-motion';
 import { lazy, Suspense } from 'react';
+import Registred from './components/views/Registred/Registred';
 
 const Error404 = lazy(() => import("./components/views/Error404/Error404"))
 
 
 const RequiredAuth = ({ children }) => {
 
-    if (!localStorage.getItem("logged")) {
+    if (!localStorage.getItem("token")) {
         return <Navigate to="/login" replace={true}/>
     }
 
@@ -62,6 +63,18 @@ export const App = () => {
                             variants={PageTransition}
                         >
                             <Login />
+                        </motion.div> } />
+                <Route
+                    path='/registered/:teamID'
+                    element={
+                        <motion.div
+                            className='page'
+                            initial="out"
+                            animate="in"
+                            exit="out" 
+                            variants={PageTransition}
+                        >
+                            <Registred />
                         </motion.div> } />
                 <Route
                     path='/*'

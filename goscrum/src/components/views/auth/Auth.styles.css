@@ -38,6 +38,10 @@
     font-size: 15px;
 }
 
+.auth > form > div > input, .auth > form > div > select {
+    padding: 8px !important;
+}
+
 .auth input {
     border-radius: var(--global-radius);
     border: var(--global-border);
