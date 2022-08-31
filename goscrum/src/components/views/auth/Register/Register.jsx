@@ -63,7 +63,7 @@ export const Register = () => {
     }
 
     const validationSchema = () => Yup.object().shape({
-        userName: Yup.string().min(6, "cantidad minima de caracteres es 6").required("* ingrese el nombre de usuario"),
+        userName: Yup.string().min(5, "cantidad minima de caracteres es 6").required("* ingrese el nombre de usuario"),
         password: Yup.string().required("* ingrese la contraseña"),
         email: Yup.string().email("* debe ser una email valido").required("* ingrese el mail"),
         // teamID: Yup.string().required("* campo obligatorio"),

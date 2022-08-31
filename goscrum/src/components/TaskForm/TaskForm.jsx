@@ -2,6 +2,9 @@
 import './TaskForm.styles.css'
 import { useFormik } from 'formik';
 import * as Yup from "yup"
+import React from 'react';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css';
 
 export const TaskForm = () => {
 
@@ -22,14 +25,13 @@ export const TaskForm = () => {
                 "Content-Type": "application/json",
                 "Authorization" : "Bearer " + localStorage.getItem("token")
             },
-            body: JSON.stringify({ task: { values } }),   
+            body: JSON.stringify({ task: values }),   
         })
         .then(response  => response.json())
         .then(data => {
-            resetForm()
-            alert("Tu tarea se creo")
-        }
-        )    
+            toast("Tu tarea se creo");
+            resetForm();
+        }); 
     };
 
     const validationSchema = () => Yup.object().shape({
@@ -60,7 +62,7 @@ export const TaskForm = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         placeholder='Titulo'
-                        values={values.title}
+                        value={values.title}
                     />
                     {errors.title && touched.title && <span className='error-message'>{errors.title}</span>}
                 </div>
@@ -70,7 +72,7 @@ export const TaskForm = () => {
                         name="status"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        values={values.status}
+                        value={values.status}
                     >
                         <option value="">Seleccionar opcion</option>
                         <option value="NEW">Nueva</option>
@@ -85,7 +87,7 @@ export const TaskForm = () => {
                         name="importance"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        values={values.importance}
+                        value={values.importance}
                     >
                         <option value="">Seleccionar opcion</option>
                             <option value="LOW">Baja</option>
@@ -102,12 +104,13 @@ export const TaskForm = () => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     placeholder='Descripcion'
-                    values={values.description}
+                    value={values.description}
                 />
                 {errors.description && touched.description && <span className='error-message'>{errors.description}</span>}
             </div>
             <button type='submit'>Crear</button>
-        </form>
+        </form>  
+        <ToastContainer />
     </section>
   )
 }

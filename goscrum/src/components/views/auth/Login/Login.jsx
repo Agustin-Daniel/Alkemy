@@ -3,6 +3,8 @@ import { useFormik } from 'formik';
 import { useNavigate, Link} from 'react-router-dom';
 import * as Yup from "yup"
 import "../Auth.styles.css"
+import { swal } from '../../../../utils/swal'
+
 
 export const Login = () => {
 
@@ -14,7 +16,7 @@ export const Login = () => {
     }
 
     const validationSchema = () => Yup.object().shape({
-        userName: Yup.string().min(6, "cantidad minima de caracteres es 6").required("* ingrese el nombre de usuario"),
+        userName: Yup.string().min(5, "cantidad minima de caracteres es 6").required("* ingrese el nombre de usuario"),
         password: Yup.string().required("* ingrese la contraseña"),
     })
 
@@ -37,8 +39,13 @@ export const Login = () => {
         })
         .then(response  => response.json())
         .then( data => {
-            localStorage.setItem("token", data?.result?.token)
-            navigate("/", {replace: true})
+            if (data.status_code === 200) {
+                localStorage.setItem("token", data?.result?.token)
+                localStorage.setItem("userName", data?.result?.user?.userName)
+                navigate("/", {replace: true})
+            } else {
+                swal()
+            }           
         })
     };
 
