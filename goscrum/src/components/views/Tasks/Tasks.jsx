@@ -7,6 +7,7 @@ import { TaskForm } from '../../TaskForm/TaskForm'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material'
+import debounce from 'lodash.debounce'
 
 const { REACT_APP_APPI_ENDPOINT } = process.env
 
@@ -16,6 +17,7 @@ export const Tasks = () => {
   const [list, setList] = useState(null)
   const [renderList, setRenderList] = useState(null)
   const [tasksfromWho, setTasksfromWho] = useState("ALL")
+  const [search, setSearch] = useState("")
   const [loadding, setLoadding] = useState(false)
   const { isPhone } = useResize()
 
@@ -37,30 +39,25 @@ export const Tasks = () => {
   })
 }, [tasksfromWho])
 
-  // const limitString = str => {
-  //   if (str.length > 170)
-  //     return { string: str.slice(0, 167).concat("..."), addButton: true }
-  //   return { string: str, addButton: false}
-  // }
+
+  useEffect(() => {
+    if (search) {
+      setRenderList(list.filter(data => data.title.startsWith(search)))
+    } else {
+      setRenderList(list)
+    }
+}, [search, list])
+
 
   const renderAllCards = () => {
     return renderList?.map( data => <Card key={data._id}  data={data} />)
   }
 
-  const renderNewCards = () => {
-    return renderList?.filter(data => data.status === "NEW")
+  const renderColumnCards = (text) => {
+    return renderList?.filter(data => data.status === text)
     .map( data => <Card key={data._id}  data={data} />)
   }
 
-  const renderInProgressCards = () => {
-    return renderList?.filter(data => data.status === "IN PROGRESS")
-    .map( data => <Card key={data._id}  data={data} />)
-  }
-
-  const renderFinishedCards = () => {
-    return renderList?.filter(data => data.status === "FINISHED")
-    .map( data => <Card key={data._id}  data={data} />)
-  }
 
   const handleChangeImportance = (event) =>{
     if (event.currentTarget.value === "ALL") {
@@ -69,6 +66,10 @@ export const Tasks = () => {
       setRenderList(list.filter(data => data.importance === event.currentTarget.value))
     }
   }
+
+  const handleSearch = debounce((event) => {
+    setSearch(event?.target?.value)
+  }, 1000)
 
   return (
     <>
@@ -98,13 +99,13 @@ export const Tasks = () => {
                 />
               </RadioGroup>
             </FormControl>
-            {/* <div className="search">
+            <div className="search">
               <input
                 type="text"
                 placeholder="Buscar por título..."
                 onChange={handleSearch}
               />
-            </div> */}
+            </div>
             <select name="importance" onChange={handleChangeImportance}>
               <option value="">Seleccionar una prioridad</option>
               <option value="ALL">Todas</option>
@@ -131,15 +132,15 @@ export const Tasks = () => {
                 <>
                 <div className='list'>
                   <h4>Nuevas</h4>
-                  {renderNewCards()}
+                  {renderColumnCards("NEW")}
                 </div>
                 <div className='list'>
                   <h4>En proceso</h4>
-                  {renderInProgressCards()}
+                  {renderColumnCards("IN PROGRESS")}
                 </div>
                 <div className='list'>
                   <h4>Finalizadas</h4>
-                  {renderFinishedCards()}
+                  {renderColumnCards("FINISHED")}
                 </div>
                 </>
                 }
