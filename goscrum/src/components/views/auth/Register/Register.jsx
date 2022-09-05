@@ -94,7 +94,7 @@ export const Register = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 />
-                {errors.userName && touched.userName && <span className='error-message'>{errors.userName}</span>}
+                {errors.userName && <span className='error-message'>{errors.userName}</span>}
             </div>
             <div>
                 <label>Contraseña</label>
