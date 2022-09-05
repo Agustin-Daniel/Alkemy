@@ -1,23 +1,38 @@
-import "./Header.styles.css"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import "./Header.styles.css";
 
 export const Header = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const { tasks } = useSelector((state) => {
+    return state.tasksReducer;
+  });
 
-    const handleLogout = () => {
-        localStorage.removeItem("token")
-        localStorage.removeItem("userName")
-        navigate("/login", {replace: true})
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    navigate("/login", { replace: true });
+  };
 
   return (
     <header>
-        <span>Go Scrum</span>
-        <div className="wrapper_right_header">
-        <div>{localStorage.getItem("userName")}</div>
-        <div onClick={handleLogout}>x</div>
+      <img src="/img/goscrum.png" alt="Logo" />
+      <spam>
+        Estamos en el entorno {process.env.NODE_ENV} corriente en el puerto{" "}
+        {process.env.REACT_APP_PORT}
+      </spam>
+      <div className="wrapper_right_header">
+        <div>
+          <button onClick={() => navigate("/donate", { replace: true })}>
+            Donar
+          </button>
         </div>
+        <div className="black">Tareas creadas: {!tasks ? 0 : tasks.length}</div>
+        <div className="black">{localStorage.getItem("userName")}</div>
+        <div onClick={handleLogout}>x</div>
+      </div>
     </header>
-  )
-}
+  );
+};

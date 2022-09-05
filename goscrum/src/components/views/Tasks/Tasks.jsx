@@ -8,8 +8,13 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material'
 import debounce from 'lodash.debounce'
+import {
+  getTasks,
+  deleteTask,
+  editTaskStatus,
+} from "../../../store/actions/tasksActions";
 
-const { REACT_APP_APPI_ENDPOINT } = process.env
+import { useSelector, useDispatch } from 'react-redux'
 
 export const Tasks = () => {
 
@@ -18,27 +23,24 @@ export const Tasks = () => {
   const [renderList, setRenderList] = useState(null)
   const [tasksfromWho, setTasksfromWho] = useState("ALL")
   const [search, setSearch] = useState("")
-  const [loadding, setLoadding] = useState(false)
   const { isPhone } = useResize()
+  const dispatch = useDispatch()
+
 
   useEffect(() => {
-    setLoadding(true);
-    fetch(`${REACT_APP_APPI_ENDPOINT}task${tasksfromWho === "ME" ? "/me" : ""}`, {
-      headers: {
-          "Content-Type": "application/json",
-          "Authorization" : "Bearer " + localStorage.getItem("token")
-      },
-  })
-  .then(response  => response.json())
-  .then(data => {
-    setList(data.result)
-    setRenderList(data.result)
-    setTimeout(() => {
-      setLoadding(false)
-    }, 3000)
-  })
-}, [tasksfromWho])
+    dispatch(getTasks(tasksfromWho === "ME" ? "me" : ""));
+  }, [tasksfromWho, dispatch]);
 
+  const { tasks, error, loading } = useSelector((state) => {
+    return state.tasksReducer;
+  });
+
+  useEffect(() => {
+    if (tasks?.length) {
+      setList(tasks);
+      setRenderList(tasks);
+    }
+  }, [tasks]);
 
   useEffect(() => {
     if (search) {
@@ -50,12 +52,12 @@ export const Tasks = () => {
 
 
   const renderAllCards = () => {
-    return renderList?.map( data => <Card key={data._id}  data={data} />)
+    return renderList?.map( data => <Card key={data._id} data={data} editCardStatus={handleEditCardStatus} deleteCard={handleDelete} />)
   }
 
   const renderColumnCards = (text) => {
     return renderList?.filter(data => data.status === text)
-    .map( data => <Card key={data._id}  data={data} />)
+    .map( data => <Card key={data._id}  data={data} editCardStatus={handleEditCardStatus} deleteCard={handleDelete} />)
   }
 
 
@@ -66,10 +68,17 @@ export const Tasks = () => {
       setRenderList(list.filter(data => data.importance === event.currentTarget.value))
     }
   }
+  
+    const handleSearch = debounce((event) => {
+      setSearch(event?.target?.value)
+    }, 1000)
 
-  const handleSearch = debounce((event) => {
-    setSearch(event?.target?.value)
-  }, 1000)
+  const handleDelete = (id) => dispatch(deleteTask(id))
+
+
+  const handleEditCardStatus = (data) => dispatch(editTaskStatus(data))
+
+  if (error) return <div>Hay un error</div>;
 
   return (
     <>
@@ -118,7 +127,7 @@ export const Tasks = () => {
 
               !renderList?.length ? <div>No hay tareas creadas</div> : 
 
-              loadding ? <><Skeleton height={90} /><Skeleton height={90} /><Skeleton height={90} /></> :
+              loading ? <><Skeleton height={90} /><Skeleton height={90} /><Skeleton height={90} /></> :
 
               <div className='list phone'> {renderAllCards()} </div>
 
@@ -127,7 +136,7 @@ export const Tasks = () => {
               <div className='list_goup'>
                 {!renderList?.length ? <div>No hay tareas creadas</div> :
                 
-                loadding ? <><Skeleton height={90} /><Skeleton height={90} /><Skeleton height={90} /></> :
+                loading ? <><Skeleton height={90} /><Skeleton height={90} /><Skeleton height={90} /></> :
 
                 <>
                 <div className='list'>
